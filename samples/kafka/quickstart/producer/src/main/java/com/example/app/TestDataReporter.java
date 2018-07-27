@@ -17,15 +17,18 @@ public class TestDataReporter implements Runnable {
     @Override
     public void run() {
         for(int i = 0; i < 1000; i++) {                
-                long time = System.currentTimeMillis();
-                System.out.println("Test Data #" + i + " from thread " + Thread.currentThread().getId());
-                final ProducerRecord<Long, String> record = new ProducerRecord<Long, String>(TOPIC, time, "Test Data #" + i);
-              producer.send(record, new Callback() {
-					public void onCompletion(RecordMetadata metadata, Exception exception) {
-					if (exception != null) {
-						System.out.println(exception);
-						System.exit(1);
-				}}});
+            long time = System.currentTimeMillis();
+            System.out.println("Test Data #" + i + " from thread " + Thread.currentThread().getId());
+            final ProducerRecord<Long, String> record = new ProducerRecord<Long, String>(TOPIC, time, "Test Data #" + i);
+            producer.send(record, new Callback() {
+                public void onCompletion(RecordMetadata metadata, Exception exception) {
+                    if (exception != null) {
+                        System.out.println("Failed to send messages: " + exception);
+                        System.exit(1);
+                    }
+                }
+	    });
         }
+        System.out.println("Sent 1000 messages successfully!");
     }
 }
